@@ -113,7 +113,6 @@
             <p class="text-slate-300 mb-10 text-lg drop-shadow-md">Bagaimana perasaanmu saat ini?</p>
 
             <div class="grid grid-cols-2 gap-4 w-full">
-                <!-- UPDATED: Breathing specific for mood -->
                 <button onclick="startApp('breathing')" class="glass-panel p-4 rounded-2xl hover:bg-white/10 tap-scale text-left group transition-all border-l-4 border-l-transparent hover:border-l-accent-teal">
                     <i data-lucide="wind" class="w-6 h-6 text-accent-teal mb-2"></i>
                     <h3 class="font-semibold text-white">Mood Buruk</h3>
@@ -158,14 +157,12 @@
     <!-- MAIN APP CONTAINER -->
     <main id="app-container" class="flex-1 overflow-y-auto overflow-x-hidden relative z-10 w-full max-w-2xl mx-auto pt-24 pb-32 px-6 no-scrollbar opacity-0 pointer-events-none transition-opacity duration-500">
 
-        <!-- 1. BREATHING VIEW (UPDATED: CYCLIC SIGHING) -->
+        <!-- 1. BREATHING VIEW -->
         <section id="view-breathing" class="view-section hidden flex-col items-center justify-center min-h-[50vh]">
             <div class="glass-panel w-full rounded-3xl p-8 flex flex-col items-center relative overflow-hidden text-center">
-                <!-- Visualizer -->
                 <div class="relative w-72 h-72 flex items-center justify-center mb-8">
                     <div class="absolute inset-0 border border-white/5 rounded-full scale-[0.8] animate-pulse"></div>
                     <div class="absolute inset-0 border border-white/5 rounded-full scale-[1.2] opacity-30"></div>
-                    
                     <div id="breath-orb" class="w-40 h-40 rounded-full bg-indigo-600 flex items-center justify-center transition-all duration-300 orb-shadow">
                         <span id="breath-text" class="text-xl font-bold text-white font-mono">Siap</span>
                     </div>
@@ -185,7 +182,7 @@
             </div>
         </section>
 
-        <!-- 2. PMR (MUSCLE) VIEW (UPDATED: SAFETY & TIMING) -->
+        <!-- 2. PMR (MUSCLE) VIEW -->
         <section id="view-pmr" class="view-section hidden flex-col gap-4">
             <div class="glass-panel p-6 rounded-3xl relative overflow-hidden">
                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-primary rounded-full blur-3xl opacity-20"></div>
@@ -216,7 +213,7 @@
             </div>
         </section>
 
-        <!-- 3. GROUNDING VIEW -->
+        <!-- 3. GROUNDING VIEW (UPDATED) -->
         <section id="view-grounding" class="view-section hidden flex-col gap-4">
             <div class="text-center mb-2">
                 <h2 class="text-2xl font-bold text-white">Teknik 5-4-3-2-1</h2>
@@ -236,14 +233,27 @@
                     </div>
                 </div>
 
-                <form onsubmit="event.preventDefault(); addGroundingItem();" class="relative group mb-4">
+                <!-- OPSI 1: KETIK (Tetap Ada) -->
+                <form onsubmit="event.preventDefault(); addGroundingItem();" class="relative group mb-3">
                     <input type="text" id="g-input" 
-                        class="w-full bg-night-800/50 border border-slate-700 text-white p-4 pr-12 rounded-xl focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all placeholder:text-slate-600" 
-                        placeholder="Contoh: Kursi, Lampu, Tembok..." autocomplete="off">
-                    <button type="submit" class="absolute right-2 top-2 bottom-2 w-10 bg-blue-600 rounded-lg flex items-center justify-center text-white hover:bg-blue-500 tap-scale shadow-md">
+                        class="w-full bg-night-800/50 border border-slate-700 text-white p-4 pr-12 rounded-xl focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all placeholder:text-slate-600 text-sm" 
+                        placeholder="Ketik disini (opsional)..." autocomplete="off">
+                    <button type="submit" class="absolute right-2 top-2 bottom-2 w-10 bg-slate-700 rounded-lg flex items-center justify-center text-white hover:bg-blue-600 tap-scale shadow-md transition-colors">
                         <i data-lucide="arrow-right" class="w-5 h-5"></i>
                     </button>
                 </form>
+
+                <div class="relative flex items-center py-2 mb-3">
+                    <div class="flex-grow border-t border-slate-700"></div>
+                    <span class="flex-shrink-0 mx-4 text-slate-500 text-[10px] uppercase font-bold tracking-widest">Atau Tanpa Ketik</span>
+                    <div class="flex-grow border-t border-slate-700"></div>
+                </div>
+
+                <!-- OPSI 2: CUKUP SADARI (BARU) -->
+                <button onclick="quickCheckGrounding()" id="g-btn-quick" class="w-full py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl font-bold shadow-lg shadow-blue-500/20 hover:from-blue-500 hover:to-cyan-500 tap-scale flex items-center justify-center gap-2 mb-4 transition-all">
+                    <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                    <span id="g-btn-text">Saya Sudah Melihat 1 Benda</span>
+                </button>
 
                 <div id="g-chips-container" class="flex flex-wrap gap-2 min-h-[40px] mb-4">
                     <p id="g-placeholder" class="text-xs text-slate-600 italic py-2 w-full text-center">Belum ada item ditambahkan</p>
@@ -269,11 +279,10 @@
             </div>
         </section>
 
-        <!-- 4. ARTICLES VIEW (UPDATED: SCIENTIFIC TERMS) -->
+        <!-- 4. ARTICLES VIEW -->
         <section id="view-articles" class="view-section hidden flex-col gap-4">
             <h2 class="text-xl font-bold px-2">Wawasan Ilmiah</h2>
             
-            <!-- Article 1: Cyclic Sighing -->
             <div class="glass-panel p-0 rounded-2xl overflow-hidden group">
                 <button class="w-full p-5 text-left flex items-start gap-4 hover:bg-white/5 transition-colors" onclick="toggleArticle(this)">
                     <div class="w-10 h-10 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center shrink-0">
@@ -291,7 +300,6 @@
                 </div>
             </div>
 
-            <!-- Article 2: Polyvagal Theory -->
             <div class="glass-panel p-0 rounded-2xl overflow-hidden group">
                 <button class="w-full p-5 text-left flex items-start gap-4 hover:bg-white/5 transition-colors" onclick="toggleArticle(this)">
                     <div class="w-10 h-10 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0">
@@ -309,7 +317,6 @@
                 </div>
             </div>
             
-            <!-- Article 3: DMN -->
              <div class="glass-panel p-0 rounded-2xl overflow-hidden group">
                 <button class="w-full p-5 text-left flex items-start gap-4 hover:bg-white/5 transition-colors" onclick="toggleArticle(this)">
                     <div class="w-10 h-10 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
@@ -369,8 +376,6 @@
         const App = {
             currentTab: null,
             intervals: [],
-            
-            // Data & Config Updated based on PDF
             data: {
                 breathing: {
                     title: "Cyclic Sighing",
@@ -393,13 +398,10 @@
                     help: "Memahami mekanisme tubuh (Vagal Brake, DMN) membantu kita mengontrol respon stres secara sadar."
                 }
             },
-
-            // Utils
             clearAllIntervals: function() {
                 this.intervals.forEach(clearInterval);
                 this.intervals = [];
             },
-            
             vibrate: function() {
                 if (navigator.vibrate) navigator.vibrate(10);
             }
@@ -476,8 +478,7 @@
             }
         }
 
-        // --- 3. FEATURE: BREATHING (UPDATED: CYCLIC SIGHING) ---
-        // Protocol: Inhale (3s) -> Inhale Again (1.5s) -> Exhale (6s)
+        // --- 3. FEATURE: BREATHING ---
         let breathState = { active: false, step: 0 };
         const BREATH_CYCLE = [
             { t: 3, label: "Tarik (Hidung)", class: "inhale-1" },
@@ -517,31 +518,21 @@
 
         function runBreathSequence(stepIdx) {
             if(!breathState.active) return;
-
             const current = BREATH_CYCLE[stepIdx];
             const orb = document.getElementById('breath-orb');
             const txt = document.getElementById('breath-instruction');
             const counter = document.getElementById('breath-text');
 
-            // Set UI
             orb.className = `w-40 h-40 rounded-full flex items-center justify-center transition-all orb-shadow ${current.class}`;
-            // Override transition duration for specific steps via style if needed, but CSS class handles it mostly
             orb.style.transitionDuration = `${current.t * 1000}ms`;
-            
             txt.innerText = current.label;
             App.vibrate();
 
-            // Countdown Logic
             let timeLeft = current.t;
             counter.innerText = Math.ceil(timeLeft);
             
-            // Sub-interval for countdown text
-            const stepInt = setInterval(() => {
-                timeLeft -= 0.1; // Smoother updates? Just stick to 1s for text
-                // Actually, just let the transition handle visual, text updates simpler
-            }, 100); 
+            const stepInt = setInterval(() => { timeLeft -= 0.1; }, 100); 
 
-            // Schedule Next Step
             const timeout = setTimeout(() => {
                 clearInterval(stepInt);
                 let nextStep = stepIdx + 1;
@@ -549,15 +540,14 @@
                 runBreathSequence(nextStep);
             }, current.t * 1000);
 
-            App.intervals.push(timeout); // Store timeout ID to clear later
+            App.intervals.push(timeout); 
         }
 
 
-        // --- 4. FEATURE: PMR (UPDATED: SLOWER RELAX PHASE) ---
-        // Protocol: Tense 7s, Relax 15s (Scientific Ratio)
+        // --- 4. FEATURE: PMR ---
         const PMR_STEPS = [
             { t: "Tangan Kanan", i: "Kepalkan tangan kanan sekuat tenaga!" },
-            { t: "Wajah & Rahang", i: "Kerutkan dahi, gigit gigi (hati-hati)!" }, // Updated based on PDF emphasis
+            { t: "Wajah & Rahang", i: "Kerutkan dahi, gigit gigi (hati-hati)!" }, 
             { t: "Bahu & Leher", i: "Angkat bahu tinggi menyentuh telinga!" },
             { t: "Kaki & Paha", i: "Luruskan dan tegangkan otot kaki!" }
         ];
@@ -578,7 +568,6 @@
         function resetPMRState() {
             App.clearAllIntervals();
             pmrState = { active: false, stepIdx: 0, timeLeft: 0, mode: 'prep' };
-            
             const btn = document.getElementById('btn-pmr-control');
             if(btn) {
                 btn.innerText = "Mulai Sesi";
@@ -598,12 +587,10 @@
                 alert("Sesi Selesai! Tubuh Anda sekarang lebih rileks.");
                 return;
             }
-
             const current = PMR_STEPS[pmrState.stepIdx];
             document.getElementById('pmr-step-count').innerText = `${pmrState.stepIdx + 1}/${PMR_STEPS.length}`;
             document.getElementById('pmr-target').innerText = current.t;
 
-            // Phase 1: Tense (7s - Updated)
             pmrState.mode = 'tense';
             pmrState.timeLeft = 7;
             document.getElementById('pmr-instruction').innerText = current.i;
@@ -613,7 +600,6 @@
             const int = setInterval(() => {
                 pmrState.timeLeft--;
                 document.getElementById('pmr-timer').innerText = pmrState.timeLeft;
-
                 if (pmrState.timeLeft <= 0) {
                     clearInterval(int);
                     App.vibrate();
@@ -625,7 +611,7 @@
 
         function runPMRRelaxPhase() {
             pmrState.mode = 'relax';
-            pmrState.timeLeft = 15; // Updated to 15s per PDF
+            pmrState.timeLeft = 15; 
             document.getElementById('pmr-instruction').innerText = "LEPASKAN! Rasakan hangat & berat (Vasodilatasi).";
             document.getElementById('pmr-visual-ring').className = "absolute inset-0 border-4 border-green-400 rounded-full scale-110 opacity-100 transition-all duration-1000";
             
@@ -639,7 +625,6 @@
             const int = setInterval(() => {
                 pmrState.timeLeft--;
                 document.getElementById('pmr-timer').innerText = pmrState.timeLeft;
-
                 if (pmrState.timeLeft <= 0) {
                     clearInterval(int);
                     pmrState.stepIdx++;
@@ -649,13 +634,14 @@
             App.intervals.push(int);
         }
 
-        // --- 5. FEATURE: GROUNDING (KEPT AS IS FROM PREVIOUS UPDATE) ---
+        // --- 5. FEATURE: GROUNDING (UPDATED: QUICK MODE) ---
+        // Added 'action' property to dynamically update button text
         const G_STAGES = [
-            { c: 5, label: "5 Benda Terlihat", ph: "Sebutkan benda fisik...", icon: "eye", instruction: "Mata terbuka, cari detail visual." },
-            { c: 4, label: "4 Benda Teraba", ph: "Tekstur celana, meja...", icon: "hand", instruction: "Rasakan tekstur nyata di kulit." },
-            { c: 3, label: "3 Suara Terdengar", ph: "Suara AC, kendaraan...", icon: "ear", instruction: "Dengarkan suara eksternal." },
-            { c: 2, label: "2 Aroma Tercium", ph: "Sabun, kopi, udara...", icon: "flower-2", instruction: "Hirup udara sekitar." },
-            { c: 1, label: "1 Rasa Kecil", ph: "Sisa minuman...", icon: "cookie", instruction: "Sadari sensasi di lidah." }
+            { c: 5, label: "5 Benda Terlihat", ph: "Sebutkan benda fisik...", icon: "eye", instruction: "Mata terbuka, cari detail visual.", action: "Saya Sudah Melihat 1 Hal" },
+            { c: 4, label: "4 Benda Teraba", ph: "Tekstur celana, meja...", icon: "hand", instruction: "Rasakan tekstur nyata di kulit.", action: "Saya Sudah Menyentuh 1 Hal" },
+            { c: 3, label: "3 Suara Terdengar", ph: "Suara AC, kendaraan...", icon: "ear", instruction: "Dengarkan suara eksternal.", action: "Saya Sudah Mendengar 1 Hal" },
+            { c: 2, label: "2 Aroma Tercium", ph: "Sabun, kopi, udara...", icon: "flower-2", instruction: "Hirup udara sekitar.", action: "Saya Sudah Mencium 1 Hal" },
+            { c: 1, label: "1 Rasa Kecil", ph: "Sisa minuman...", icon: "cookie", instruction: "Sadari sensasi di lidah.", action: "Saya Sudah Merasakan 1 Hal" }
         ];
         let gState = { stageIdx: 0, items: [] };
 
@@ -667,6 +653,9 @@
             document.getElementById('g-counter').innerText = `${gState.items.length}/${stage.c}`;
             document.getElementById('g-icon-wrapper').innerHTML = `<i data-lucide="${stage.icon}" class="w-6 h-6"></i>`;
             
+            // Update Action Button Text
+            document.getElementById('g-btn-text').innerText = stage.action;
+
             const pct = (gState.items.length / stage.c) * 100;
             document.getElementById('g-progress-bar').style.width = `${pct}%`;
 
@@ -689,9 +678,28 @@
             const input = document.getElementById('g-input');
             const val = input.value.trim();
             if (!val) { input.focus(); return; }
-
-            gState.items.push(val);
+            processGroundingEntry(val);
             input.value = '';
+            input.focus();
+        }
+
+        // New function to handle quick button press
+        function quickCheckGrounding() {
+            const stage = G_STAGES[gState.stageIdx];
+            // Identify label based on stage (Visual #1, Sound #1, etc)
+            let typeLabel = "Item";
+            if(stage.icon === "eye") typeLabel = "Visual";
+            else if(stage.icon === "hand") typeLabel = "Tekstur";
+            else if(stage.icon === "ear") typeLabel = "Suara";
+            else if(stage.icon === "flower-2") typeLabel = "Aroma";
+            else if(stage.icon === "cookie") typeLabel = "Rasa";
+            
+            const count = gState.items.length + 1;
+            processGroundingEntry(`${typeLabel} #${count}`);
+        }
+
+        function processGroundingEntry(val) {
+            gState.items.push(val);
             App.vibrate();
 
             const currentTarget = G_STAGES[gState.stageIdx].c;
@@ -711,7 +719,6 @@
             } else {
                 updateGroundingUI();
             }
-            input.focus();
         }
 
         function resetGrounding() {
