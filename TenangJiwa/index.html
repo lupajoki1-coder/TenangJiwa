@@ -86,29 +86,24 @@
 
         /* Breathing Animation */
         .orb-shadow { box-shadow: 0 0 50px rgba(99, 102, 241, 0.3); }
-        .inhale { transform: scale(1.5); background-color: #818cf8; box-shadow: 0 0 80px rgba(129, 140, 248, 0.6); }
-        .hold { transform: scale(1.5); border-width: 4px; border-color: #c7d2fe; background-color: transparent; }
-        .exhale { transform: scale(1.0); background-color: #4f46e5; box-shadow: 0 0 30px rgba(79, 70, 229, 0.2); }
+        /* Cyclic Sighing States */
+        .inhale-1 { transform: scale(1.3); background-color: #818cf8; } /* First Inhale */
+        .inhale-2 { transform: scale(1.6); background-color: #a5b4fc; box-shadow: 0 0 80px rgba(129, 140, 248, 0.8); } /* Second Inhale (Peak) */
+        .exhale-long { transform: scale(1.0); background-color: #4f46e5; transition-duration: 6000ms !important; } /* Long Exhale */
     </style>
 </head>
 <body class="bg-night-900 text-slate-100 h-[100dvh] w-full overflow-hidden flex flex-col font-sans" oncontextmenu="return false;">
 
-    <!-- BACKGROUND IMAGE (Modified) -->
+    <!-- BACKGROUND IMAGE -->
     <div class="fixed inset-0 z-0 pointer-events-none">
-        <!-- Abstract Blur Image (Copyright Free from Unsplash) -->
         <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop" 
              alt="Calming Background" 
              class="w-full h-full object-cover opacity-70">
-        
-        <!-- Dark Overlay for Text Readability -->
         <div class="absolute inset-0 bg-night-900/60 mix-blend-multiply"></div>
-        
-        <!-- Texture Noise (Optional) -->
         <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-150 contrast-150 mix-blend-overlay"></div>
     </div>
 
     <!-- ONBOARDING (WELCOME SCREEN) -->
-    <!-- Modified bg-night-900/90 to bg-night-900/30 to reveal background image -->
     <section id="view-welcome" class="absolute inset-0 z-50 bg-night-900/30 backdrop-blur-md flex flex-col items-center justify-center p-6 transition-opacity duration-500">
         <div class="w-full max-w-sm text-center animate-slide-up">
             <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 mb-6 shadow-lg shadow-indigo-500/20">
@@ -118,25 +113,26 @@
             <p class="text-slate-300 mb-10 text-lg drop-shadow-md">Bagaimana perasaanmu saat ini?</p>
 
             <div class="grid grid-cols-2 gap-4 w-full">
+                <!-- UPDATED: Breathing specific for mood -->
                 <button onclick="startApp('breathing')" class="glass-panel p-4 rounded-2xl hover:bg-white/10 tap-scale text-left group transition-all border-l-4 border-l-transparent hover:border-l-accent-teal">
                     <i data-lucide="wind" class="w-6 h-6 text-accent-teal mb-2"></i>
-                    <h3 class="font-semibold text-white">Cemas / Panik</h3>
-                    <p class="text-xs text-slate-400 mt-1">Stabilkan napas</p>
+                    <h3 class="font-semibold text-white">Mood Buruk</h3>
+                    <p class="text-xs text-slate-400 mt-1">Desahan Siklis</p>
                 </button>
                 <button onclick="startApp('pmr')" class="glass-panel p-4 rounded-2xl hover:bg-white/10 tap-scale text-left group transition-all border-l-4 border-l-transparent hover:border-l-primary">
                     <i data-lucide="zap" class="w-6 h-6 text-primary-glow mb-2"></i>
-                    <h3 class="font-semibold text-white">Tegang / Lelah</h3>
-                    <p class="text-xs text-slate-400 mt-1">Rilekskan otot</p>
+                    <h3 class="font-semibold text-white">Badan Kaku</h3>
+                    <p class="text-xs text-slate-400 mt-1">PMR</p>
                 </button>
                 <button onclick="startApp('grounding')" class="glass-panel p-4 rounded-2xl hover:bg-white/10 tap-scale text-left group transition-all border-l-4 border-l-transparent hover:border-l-accent-amber">
                     <i data-lucide="anchor" class="w-6 h-6 text-accent-amber mb-2"></i>
                     <h3 class="font-semibold text-white">Hilang Fokus</h3>
-                    <p class="text-xs text-slate-400 mt-1">Kembali ke realitas</p>
+                    <p class="text-xs text-slate-400 mt-1">Grounding</p>
                 </button>
                 <button onclick="startApp('articles')" class="glass-panel p-4 rounded-2xl hover:bg-white/10 tap-scale text-left group transition-all border-l-4 border-l-transparent hover:border-l-accent-rose">
                     <i data-lucide="book-heart" class="w-6 h-6 text-accent-rose mb-2"></i>
-                    <h3 class="font-semibold text-white">Butuh Wawasan</h3>
-                    <p class="text-xs text-slate-400 mt-1">Bacaan ringan</p>
+                    <h3 class="font-semibold text-white">Info Ilmiah</h3>
+                    <p class="text-xs text-slate-400 mt-1">Neurobiologi</p>
                 </button>
             </div>
             
@@ -162,7 +158,7 @@
     <!-- MAIN APP CONTAINER -->
     <main id="app-container" class="flex-1 overflow-y-auto overflow-x-hidden relative z-10 w-full max-w-2xl mx-auto pt-24 pb-32 px-6 no-scrollbar opacity-0 pointer-events-none transition-opacity duration-500">
 
-        <!-- 1. BREATHING VIEW -->
+        <!-- 1. BREATHING VIEW (UPDATED: CYCLIC SIGHING) -->
         <section id="view-breathing" class="view-section hidden flex-col items-center justify-center min-h-[50vh]">
             <div class="glass-panel w-full rounded-3xl p-8 flex flex-col items-center relative overflow-hidden text-center">
                 <!-- Visualizer -->
@@ -170,23 +166,26 @@
                     <div class="absolute inset-0 border border-white/5 rounded-full scale-[0.8] animate-pulse"></div>
                     <div class="absolute inset-0 border border-white/5 rounded-full scale-[1.2] opacity-30"></div>
                     
-                    <div id="breath-orb" class="w-40 h-40 rounded-full bg-indigo-600 flex items-center justify-center transition-all duration-1000 orb-shadow">
-                        <span id="breath-text" class="text-4xl font-bold text-white font-mono">4</span>
+                    <div id="breath-orb" class="w-40 h-40 rounded-full bg-indigo-600 flex items-center justify-center transition-all duration-300 orb-shadow">
+                        <span id="breath-text" class="text-xl font-bold text-white font-mono">Siap</span>
                     </div>
                 </div>
 
-                <h2 id="breath-instruction" class="text-xl font-bold text-white mb-2 transition-all">Siap Memulai?</h2>
-                <p class="text-slate-400 text-sm mb-8 max-w-xs mx-auto">Ikuti irama lingkaran. Tarik napas saat membesar, hembuskan saat mengecil.</p>
+                <div class="mb-8">
+                    <span class="px-2 py-1 rounded bg-teal-500/20 text-teal-300 text-[10px] font-bold uppercase tracking-wider border border-teal-500/30">Stanford Protocol</span>
+                    <h2 id="breath-instruction" class="text-2xl font-bold text-white mt-2 mb-1 transition-all">Cyclic Sighing</h2>
+                    <p class="text-slate-400 text-sm max-w-xs mx-auto">Tarik (Hidung) &rarr; Tarik Lagi &rarr; Hembus Panjang (Mulut)</p>
+                </div>
 
                 <div class="flex gap-4 w-full justify-center">
-                    <button id="btn-breath-toggle" onclick="toggleBreathing()" class="bg-indigo-500 hover:bg-indigo-400 text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-indigo-500/20 tap-scale flex items-center gap-2 transition-all w-40 justify-center">
+                    <button id="btn-breath-toggle" onclick="toggleBreathing()" class="bg-indigo-500 hover:bg-indigo-400 text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-indigo-500/20 tap-scale flex items-center gap-2 transition-all w-48 justify-center">
                         <i data-lucide="play" class="w-5 h-5"></i> Mulai
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- 2. PMR (MUSCLE) VIEW -->
+        <!-- 2. PMR (MUSCLE) VIEW (UPDATED: SAFETY & TIMING) -->
         <section id="view-pmr" class="view-section hidden flex-col gap-4">
             <div class="glass-panel p-6 rounded-3xl relative overflow-hidden">
                 <div class="absolute -right-4 -top-4 w-24 h-24 bg-primary rounded-full blur-3xl opacity-20"></div>
@@ -197,14 +196,14 @@
                         <h2 id="pmr-target" class="text-2xl font-bold text-white mt-2">Persiapan</h2>
                     </div>
                     <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-primary-glow">
-                        <span id="pmr-step-count" class="font-mono font-bold">1/5</span>
+                        <span id="pmr-step-count" class="font-mono font-bold">1/4</span>
                     </div>
                 </div>
 
                 <div class="h-48 flex flex-col items-center justify-center mb-6 relative">
                     <div id="pmr-visual-ring" class="absolute inset-0 border-4 border-slate-700 rounded-full opacity-20 transition-all duration-300"></div>
-                    <span id="pmr-timer" class="text-6xl font-bold text-white font-mono z-10">5</span>
-                    <p id="pmr-instruction" class="text-slate-400 text-sm mt-4 text-center">Tekan Mulai untuk panduan</p>
+                    <span id="pmr-timer" class="text-6xl font-bold text-white font-mono z-10">--</span>
+                    <p id="pmr-instruction" class="text-slate-400 text-sm mt-4 text-center max-w-[80%]">Hindari area yang cedera atau sakit.</p>
                 </div>
 
                 <div id="pmr-progress-bg" class="w-full h-1 bg-slate-800 rounded-full overflow-hidden mb-6">
@@ -221,31 +220,32 @@
         <section id="view-grounding" class="view-section hidden flex-col gap-4">
             <div class="text-center mb-2">
                 <h2 class="text-2xl font-bold text-white">Teknik 5-4-3-2-1</h2>
-                <p class="text-slate-400 text-sm">Kembalikan kesadaran ke masa kini</p>
+                <p class="text-blue-300 text-xs font-medium bg-blue-500/10 inline-block px-3 py-1 rounded-full border border-blue-500/20 mt-1">
+                    <i data-lucide="eye" class="inline w-3 h-3 mr-1"></i> Protokol: Mata Terbuka & Fokus Eksternal
+                </p>
             </div>
 
-            <div id="grounding-card" class="glass-panel p-6 rounded-3xl transition-all">
+            <div id="grounding-card" class="glass-panel p-6 rounded-3xl transition-all border-t-2 border-t-blue-500/50">
                 <div class="flex items-center gap-4 mb-6">
                     <div id="g-icon-wrapper" class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/20 transition-all">
                         <i data-lucide="eye" class="w-6 h-6"></i>
                     </div>
                     <div>
                         <h3 id="g-label" class="text-lg font-bold text-white">5 Benda Terlihat</h3>
-                        <p class="text-xs text-blue-300">Lihat sekelilingmu sekarang</p>
+                        <p id="g-desc" class="text-xs text-blue-300">Sebutkan benda nyata di ruangan ini</p>
                     </div>
                 </div>
 
                 <form onsubmit="event.preventDefault(); addGroundingItem();" class="relative group mb-4">
                     <input type="text" id="g-input" 
                         class="w-full bg-night-800/50 border border-slate-700 text-white p-4 pr-12 rounded-xl focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all placeholder:text-slate-600" 
-                        placeholder="Ketik apa yang kamu lihat..." autocomplete="off">
+                        placeholder="Contoh: Kursi, Lampu, Tembok..." autocomplete="off">
                     <button type="submit" class="absolute right-2 top-2 bottom-2 w-10 bg-blue-600 rounded-lg flex items-center justify-center text-white hover:bg-blue-500 tap-scale shadow-md">
                         <i data-lucide="arrow-right" class="w-5 h-5"></i>
                     </button>
                 </form>
 
                 <div id="g-chips-container" class="flex flex-wrap gap-2 min-h-[40px] mb-4">
-                    <!-- Items appended here -->
                     <p id="g-placeholder" class="text-xs text-slate-600 italic py-2 w-full text-center">Belum ada item ditambahkan</p>
                 </div>
 
@@ -257,69 +257,73 @@
                 </div>
             </div>
 
-            <!-- Success State -->
             <div id="grounding-success" class="hidden glass-panel p-8 rounded-3xl text-center animate-slide-up">
                 <div class="w-20 h-20 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/30">
-                    <i data-lucide="check-circle" class="w-10 h-10"></i>
+                    <i data-lucide="shield-check" class="w-10 h-10"></i>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-2">Sempurna!</h3>
-                <p class="text-slate-400 mb-6 text-sm">Anda telah berhasil menghubungkan kembali indra Anda.</p>
-                <button onclick="resetGrounding()" class="px-6 py-3 bg-slate-800 text-white rounded-xl font-bold w-full hover:bg-slate-700">Ulangi</button>
+                <h3 class="text-xl font-bold text-white mb-2">Aman & Terhubung</h3>
+                <p class="text-slate-400 mb-6 text-sm leading-relaxed">
+                    Anda telah mengaktifkan jangkar eksternal untuk menstabilkan sistem saraf.
+                </p>
+                <button onclick="resetGrounding()" class="px-6 py-3 bg-slate-800 text-white rounded-xl font-bold w-full hover:bg-slate-700">Ulangi Latihan</button>
             </div>
         </section>
 
-        <!-- 4. ARTICLES VIEW -->
+        <!-- 4. ARTICLES VIEW (UPDATED: SCIENTIFIC TERMS) -->
         <section id="view-articles" class="view-section hidden flex-col gap-4">
-            <h2 class="text-xl font-bold px-2">Wawasan Singkat</h2>
+            <h2 class="text-xl font-bold px-2">Wawasan Ilmiah</h2>
             
-            <!-- Card 1 -->
+            <!-- Article 1: Cyclic Sighing -->
             <div class="glass-panel p-0 rounded-2xl overflow-hidden group">
                 <button class="w-full p-5 text-left flex items-start gap-4 hover:bg-white/5 transition-colors" onclick="toggleArticle(this)">
                     <div class="w-10 h-10 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center shrink-0">
                         <i data-lucide="wind" class="w-5 h-5"></i>
                     </div>
                     <div class="flex-1">
-                        <h3 class="font-bold text-slate-200 text-sm">Sihir Pernapasan 4-7-8</h3>
-                        <p class="text-xs text-slate-500 mt-1">Mengapa melambatkan napas menenangkan otak?</p>
+                        <h3 class="font-bold text-slate-200 text-sm">Mengapa "Desahan Siklis"?</h3>
+                        <p class="text-xs text-slate-500 mt-1">Studi Stanford: Lebih efektif dari Mindfulness.</p>
                     </div>
                     <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 transition-transform article-chevron"></i>
                 </button>
                 <div class="hidden px-5 pb-5 text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-4 article-content">
-                    <p>Ketika stres, kita cenderung bernapas pendek. Pernapasan diafragma merangsang saraf Vagus, yang bertindak sebagai "rem" bagi sistem saraf, menurunkan detak jantung dan tekanan darah secara instan.</p>
+                    <p class="mb-2">Studi terbaru (2023) menunjukkan bahwa <i>Cyclic Sighing</i> (dua inhalasi, satu ekshalasi panjang) paling efektif menurunkan gairah fisiologis.</p>
+                    <p>Mekanismenya: Inhalasi ganda membuka alveoli paru-paru yang kempis, membuang CO2 lebih efisien, dan menenangkan sistem saraf seketika.</p>
                 </div>
             </div>
 
-            <!-- Card 2 -->
+            <!-- Article 2: Polyvagal Theory -->
             <div class="glass-panel p-0 rounded-2xl overflow-hidden group">
                 <button class="w-full p-5 text-left flex items-start gap-4 hover:bg-white/5 transition-colors" onclick="toggleArticle(this)">
                     <div class="w-10 h-10 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0">
-                        <i data-lucide="brain-circuit" class="w-5 h-5"></i>
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="font-bold text-slate-200 text-sm">Grounding: Hack Otak</h3>
-                        <p class="text-xs text-slate-500 mt-1">Keluar dari jebakan pikiran masa depan.</p>
-                    </div>
-                    <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 transition-transform article-chevron"></i>
-                </button>
-                <div class="hidden px-5 pb-5 text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-4 article-content">
-                    <p>Kecemasan seringkali tentang masa depan ("Bagaimana jika..."). Teknik Grounding memaksa otak Prefrontal Cortex untuk mengambil alih kendali dari Amigdala (pusat emosi) dengan fokus pada data sensorik nyata saat ini.</p>
-                </div>
-            </div>
-            
-            <!-- Card 3 -->
-             <div class="glass-panel p-0 rounded-2xl overflow-hidden group">
-                <button class="w-full p-5 text-left flex items-start gap-4 hover:bg-white/5 transition-colors" onclick="toggleArticle(this)">
-                    <div class="w-10 h-10 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
                         <i data-lucide="activity" class="w-5 h-5"></i>
                     </div>
                     <div class="flex-1">
-                        <h3 class="font-bold text-slate-200 text-sm">Paradoks Otot</h3>
-                        <p class="text-xs text-slate-500 mt-1">Tegangkan untuk Rileks.</p>
+                        <h3 class="font-bold text-slate-200 text-sm">Rem Vagal (Vagal Brake)</h3>
+                        <p class="text-xs text-slate-500 mt-1">Teori Polivagal dan rasa aman.</p>
                     </div>
                     <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 transition-transform article-chevron"></i>
                 </button>
                 <div class="hidden px-5 pb-5 text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-4 article-content">
-                    <p>Kita sering tidak sadar sedang menegangkan bahu atau rahang. Dengan sengaja menegangkan otot ekstrem lalu melepaskannya (PMR), kita mengajarkan otak untuk mengenali perbedaan sensasi 'tegang' dan 'rileks' dengan lebih jelas.</p>
+                    <p class="mb-2">Stres menonaktifkan "Rem Vagal", membuat jantung berdetak kencang.</p>
+                    <p>Pernapasan lambat (khususnya ekshalasi panjang) secara fisik menekan rem ini kembali, mengaktifkan saraf Vagus Ventral yang mengatur ketenangan dan keterhubungan sosial.</p>
+                </div>
+            </div>
+            
+            <!-- Article 3: DMN -->
+             <div class="glass-panel p-0 rounded-2xl overflow-hidden group">
+                <button class="w-full p-5 text-left flex items-start gap-4 hover:bg-white/5 transition-colors" onclick="toggleArticle(this)">
+                    <div class="w-10 h-10 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                        <i data-lucide="brain-circuit" class="w-5 h-5"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-slate-200 text-sm">Otak yang Melamun (DMN)</h3>
+                        <p class="text-xs text-slate-500 mt-1">Default Mode Network & Ruminasi.</p>
+                    </div>
+                    <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 transition-transform article-chevron"></i>
+                </button>
+                <div class="hidden px-5 pb-5 text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-4 article-content">
+                    <p>Saat kita cemas atau melamun, area otak bernama DMN (Default Mode Network) menjadi hiperaktif.</p>
+                    <p>Teknik fokus eksternal (Grounding) secara aktif "mematikan" DMN dan mengaktifkan TPN (Task Positive Network), menghentikan siklus pikiran negatif.</p>
                 </div>
             </div>
         </section>
@@ -366,27 +370,27 @@
             currentTab: null,
             intervals: [],
             
-            // Data & Config
+            // Data & Config Updated based on PDF
             data: {
                 breathing: {
-                    title: "Box Breathing",
-                    desc: "Stabilkan saraf otonom",
-                    help: "Teknik ini digunakan oleh pasukan khusus untuk menenangkan diri. Tarik napas 4 detik, Tahan 4 detik, Hembuskan 4 detik, Tahan 4 detik."
+                    title: "Cyclic Sighing",
+                    desc: "Reduksi Arousal Fisiologis",
+                    help: "Teknik ini terbukti paling efektif untuk meningkatkan mood. Tarik napas melalui hidung (penuh), Tarik napas pendek lagi (maksimal), lalu Hembuskan panjang melalui mulut."
                 },
                 pmr: {
                     title: "Progressive Muscle",
                     desc: "Lepaskan ketegangan fisik",
-                    help: "Kita sering menahan stres di otot tanpa sadar. Fitur ini memandu Anda menegangkan otot sekuatnya, lalu melepaskannya tiba-tiba untuk merasakan sensasi rileks."
+                    help: "KONTRAINDIKASI: Jangan tegangkan area yang cedera. Protokol: Tegang 7-10 detik, Rileks 15-20 detik."
                 },
                 grounding: {
-                    title: "Grounding 5-4-3-2-1",
-                    desc: "Atasi panic attack",
-                    help: "Gunakan 5 indra untuk keluar dari pikiran negatif. Temukan benda nyata di sekitar Anda sesuai instruksi."
+                    title: "Grounding Eksternal",
+                    desc: "Regulasi Disosiasi",
+                    help: "PROTOKOL KEAMANAN: Lakukan dengan mata terbuka. Fokus pada objek nyata di luar tubuh untuk mencegah flashback somatik."
                 },
                 articles: {
                     title: "Wawasan",
-                    desc: "Pahami tubuhmu",
-                    help: "Kumpulan fakta ilmiah singkat tentang bagaimana tubuh merespon stres dan cara mengatasinya."
+                    desc: "Neurobiologi Stres",
+                    help: "Memahami mekanisme tubuh (Vagal Brake, DMN) membantu kita mengontrol respon stres secara sadar."
                 }
             },
 
@@ -403,16 +407,13 @@
 
         // --- 2. NAVIGATION LOGIC ---
         function startApp(targetTab) {
-            // Hide Welcome
             const welcome = document.getElementById('view-welcome');
             welcome.classList.add('opacity-0', 'pointer-events-none');
             
-            // Show App UI
             document.getElementById('app-header').classList.remove('opacity-0', 'pointer-events-none');
             document.getElementById('app-container').classList.remove('opacity-0', 'pointer-events-none');
             document.getElementById('app-nav').classList.remove('translate-y-full');
 
-            // Switch to specific tab
             setTimeout(() => {
                 welcome.style.display = 'none';
                 switchTab(targetTab);
@@ -424,26 +425,21 @@
             App.currentTab = tabId;
             App.vibrate();
 
-            // Cleanup previous states
             App.clearAllIntervals();
             resetBreathingState();
             resetPMRState();
 
-            // 1. UI Updates - Hide all sections
             document.querySelectorAll('.view-section').forEach(el => {
                 el.classList.add('hidden');
                 el.classList.remove('animate-slide-up');
             });
 
-            // 2. Show active section
             const target = document.getElementById(`view-${tabId}`);
             target.classList.remove('hidden');
-            target.classList.add('animate-slide-up'); // Re-trigger animation
+            target.classList.add('animate-slide-up');
 
-            // 3. Update Header
             document.getElementById('header-subtitle').innerText = App.data[tabId].desc;
 
-            // 4. Update Nav Icons
             document.querySelectorAll('.nav-item').forEach(btn => {
                 const isActive = btn.id === `nav-${tabId}`;
                 const icon = btn.querySelector('i');
@@ -480,8 +476,14 @@
             }
         }
 
-        // --- 3. FEATURE: BREATHING ---
-        let breathState = { active: false, phase: 0, timer: 4 };
+        // --- 3. FEATURE: BREATHING (UPDATED: CYCLIC SIGHING) ---
+        // Protocol: Inhale (3s) -> Inhale Again (1.5s) -> Exhale (6s)
+        let breathState = { active: false, step: 0 };
+        const BREATH_CYCLE = [
+            { t: 3, label: "Tarik (Hidung)", class: "inhale-1" },
+            { t: 1.5, label: "Tarik Lagi!", class: "inhale-2" },
+            { t: 6, label: "Hembus (Mulut)", class: "exhale-long" }
+        ];
 
         function toggleBreathing() {
             const btn = document.getElementById('btn-breath-toggle');
@@ -489,7 +491,7 @@
                 breathState.active = true;
                 btn.innerHTML = `<i data-lucide="pause" class="w-5 h-5"></i> Jeda`;
                 btn.classList.replace('bg-indigo-500', 'bg-slate-700');
-                runBreathLoop();
+                runBreathSequence(0);
             } else {
                 resetBreathingState();
             }
@@ -498,8 +500,13 @@
 
         function resetBreathingState() {
             App.clearAllIntervals();
-            breathState = { active: false, phase: 0, timer: 4 };
-            updateBreathVisuals(0, 4);
+            breathState = { active: false, step: 0 };
+            
+            const orb = document.getElementById('breath-orb');
+            orb.className = "w-40 h-40 rounded-full bg-indigo-600 flex items-center justify-center transition-all duration-500 orb-shadow";
+            document.getElementById('breath-text').innerText = "Siap";
+            document.getElementById('breath-instruction').innerText = "Cyclic Sighing";
+            
             const btn = document.getElementById('btn-breath-toggle');
             if(btn) {
                 btn.innerHTML = `<i data-lucide="play" class="w-5 h-5"></i> Mulai`;
@@ -508,69 +515,53 @@
             lucide.createIcons();
         }
 
-        function runBreathLoop() {
-            // Initial call
-            updateBreathVisuals(1, 4);
-            breathState.phase = 1;
-            breathState.timer = 4;
+        function runBreathSequence(stepIdx) {
+            if(!breathState.active) return;
 
-            const int = setInterval(() => {
-                breathState.timer--;
-                document.getElementById('breath-text').innerText = breathState.timer;
-
-                if (breathState.timer <= 0) {
-                    App.vibrate();
-                    breathState.phase++;
-                    if (breathState.phase > 4) breathState.phase = 1;
-                    breathState.timer = 4;
-                    updateBreathVisuals(breathState.phase, 4);
-                }
-            }, 1000);
-            App.intervals.push(int);
-        }
-
-        function updateBreathVisuals(phase, time) {
+            const current = BREATH_CYCLE[stepIdx];
             const orb = document.getElementById('breath-orb');
             const txt = document.getElementById('breath-instruction');
-            const timerTxt = document.getElementById('breath-text');
+            const counter = document.getElementById('breath-text');
 
-            timerTxt.innerText = time;
-            orb.className = "w-40 h-40 rounded-full flex items-center justify-center transition-all duration-1000 orb-shadow";
+            // Set UI
+            orb.className = `w-40 h-40 rounded-full flex items-center justify-center transition-all orb-shadow ${current.class}`;
+            // Override transition duration for specific steps via style if needed, but CSS class handles it mostly
+            orb.style.transitionDuration = `${current.t * 1000}ms`;
+            
+            txt.innerText = current.label;
+            App.vibrate();
 
-            switch(phase) {
-                case 0: // Idle
-                    orb.classList.add('bg-indigo-600', 'scale-100');
-                    txt.innerText = "Siap Memulai?";
-                    break;
-                case 1: // Inhale
-                    orb.classList.add('inhale');
-                    txt.innerText = "Tarik Napas (Hidung)...";
-                    break;
-                case 2: // Hold Full
-                    orb.classList.add('hold');
-                    txt.innerText = "Tahan Napas...";
-                    break;
-                case 3: // Exhale
-                    orb.classList.add('exhale');
-                    txt.innerText = "Hembuskan (Mulut)...";
-                    break;
-                case 4: // Hold Empty
-                    orb.classList.add('hold'); 
-                    orb.style.borderColor = "#818cf8";
-                    txt.innerText = "Istirahat...";
-                    break;
-            }
+            // Countdown Logic
+            let timeLeft = current.t;
+            counter.innerText = Math.ceil(timeLeft);
+            
+            // Sub-interval for countdown text
+            const stepInt = setInterval(() => {
+                timeLeft -= 0.1; // Smoother updates? Just stick to 1s for text
+                // Actually, just let the transition handle visual, text updates simpler
+            }, 100); 
+
+            // Schedule Next Step
+            const timeout = setTimeout(() => {
+                clearInterval(stepInt);
+                let nextStep = stepIdx + 1;
+                if(nextStep >= BREATH_CYCLE.length) nextStep = 0;
+                runBreathSequence(nextStep);
+            }, current.t * 1000);
+
+            App.intervals.push(timeout); // Store timeout ID to clear later
         }
 
-        // --- 4. FEATURE: PMR (Muscle) ---
+
+        // --- 4. FEATURE: PMR (UPDATED: SLOWER RELAX PHASE) ---
+        // Protocol: Tense 7s, Relax 15s (Scientific Ratio)
         const PMR_STEPS = [
             { t: "Tangan Kanan", i: "Kepalkan tangan kanan sekuat tenaga!" },
-            { t: "Tangan Kiri", i: "Kepalkan tangan kiri sekuat tenaga!" },
-            { t: "Bahu", i: "Angkat bahu tinggi menyentuh telinga!" },
-            { t: "Wajah", i: "Kerutkan dahi, pejamkan mata rapat-rapat!" },
-            { t: "Kaki", i: "Luruskan dan tegangkan paha serta betis!" }
+            { t: "Wajah & Rahang", i: "Kerutkan dahi, gigit gigi (hati-hati)!" }, // Updated based on PDF emphasis
+            { t: "Bahu & Leher", i: "Angkat bahu tinggi menyentuh telinga!" },
+            { t: "Kaki & Paha", i: "Luruskan dan tegangkan otot kaki!" }
         ];
-        let pmrState = { active: false, stepIdx: 0, timeLeft: 0, mode: 'prep' }; // mode: prep, tense, relax
+        let pmrState = { active: false, stepIdx: 0, timeLeft: 0, mode: 'prep' }; 
 
         function togglePMR() {
             if (!pmrState.active) {
@@ -588,7 +579,6 @@
             App.clearAllIntervals();
             pmrState = { active: false, stepIdx: 0, timeLeft: 0, mode: 'prep' };
             
-            // Reset UI
             const btn = document.getElementById('btn-pmr-control');
             if(btn) {
                 btn.innerText = "Mulai Sesi";
@@ -596,8 +586,8 @@
                 btn.classList.add('bg-white', 'text-night-900');
             }
             document.getElementById('pmr-target').innerText = "Persiapan";
-            document.getElementById('pmr-instruction').innerText = "Tekan Mulai untuk panduan";
-            document.getElementById('pmr-timer').innerText = "5";
+            document.getElementById('pmr-instruction').innerText = "Hindari area yang cedera.";
+            document.getElementById('pmr-timer').innerText = "--";
             document.getElementById('pmr-visual-ring').className = "absolute inset-0 border-4 border-slate-700 rounded-full opacity-20";
             document.getElementById('pmr-progress-bar').style.width = '0%';
         }
@@ -605,7 +595,7 @@
         function runPMRSequence() {
             if (pmrState.stepIdx >= PMR_STEPS.length) {
                 resetPMRState();
-                alert("Sesi Selesai! Bagus sekali.");
+                alert("Sesi Selesai! Tubuh Anda sekarang lebih rileks.");
                 return;
             }
 
@@ -613,12 +603,12 @@
             document.getElementById('pmr-step-count').innerText = `${pmrState.stepIdx + 1}/${PMR_STEPS.length}`;
             document.getElementById('pmr-target').innerText = current.t;
 
-            // Phase 1: Tense (5s)
+            // Phase 1: Tense (7s - Updated)
             pmrState.mode = 'tense';
-            pmrState.timeLeft = 5;
+            pmrState.timeLeft = 7;
             document.getElementById('pmr-instruction').innerText = current.i;
             document.getElementById('pmr-visual-ring').className = "absolute inset-0 border-4 border-red-500 rounded-full animate-ping opacity-75";
-            document.getElementById('pmr-progress-bar').className = "h-full bg-red-500 transition-all duration-[5000ms] ease-linear w-full"; // Fill red
+            document.getElementById('pmr-progress-bar').className = "h-full bg-red-500 transition-all duration-[7000ms] ease-linear w-full"; 
             
             const int = setInterval(() => {
                 pmrState.timeLeft--;
@@ -635,16 +625,15 @@
 
         function runPMRRelaxPhase() {
             pmrState.mode = 'relax';
-            pmrState.timeLeft = 8;
-            document.getElementById('pmr-instruction').innerText = "LEPASKAN! Rasakan aliran darah hangat & rileks.";
+            pmrState.timeLeft = 15; // Updated to 15s per PDF
+            document.getElementById('pmr-instruction').innerText = "LEPASKAN! Rasakan hangat & berat (Vasodilatasi).";
             document.getElementById('pmr-visual-ring').className = "absolute inset-0 border-4 border-green-400 rounded-full scale-110 opacity-100 transition-all duration-1000";
             
-            // Fix progress bar transition for relax
             const bar = document.getElementById('pmr-progress-bar');
             bar.style.transition = 'none';
             bar.style.width = '0%'; 
             setTimeout(() => {
-                 bar.className = "h-full bg-green-500 transition-all duration-[8000ms] ease-linear w-full";
+                 bar.className = "h-full bg-green-500 transition-all duration-[15000ms] ease-linear w-full";
             }, 50);
 
             const int = setInterval(() => {
@@ -654,38 +643,33 @@
                 if (pmrState.timeLeft <= 0) {
                     clearInterval(int);
                     pmrState.stepIdx++;
-                    runPMRSequence(); // Next step
+                    runPMRSequence(); 
                 }
             }, 1000);
             App.intervals.push(int);
         }
 
-        // --- 5. FEATURE: GROUNDING ---
+        // --- 5. FEATURE: GROUNDING (KEPT AS IS FROM PREVIOUS UPDATE) ---
         const G_STAGES = [
-            { c: 5, label: "5 Benda Terlihat", ph: "Meja, lampu, awan...", icon: "eye", color: "blue" },
-            { c: 4, label: "4 Benda Teraba", ph: "Kain celana, rambut, meja...", icon: "hand", color: "cyan" },
-            { c: 3, label: "3 Suara Terdengar", ph: "AC, burung, napas...", icon: "ear", color: "teal" },
-            { c: 2, label: "2 Aroma Tercium", ph: "Sabun, kopi, udara...", icon: "flower-2", color: "emerald" },
-            { c: 1, label: "1 Rasa di Lidah", ph: "Sisa makanan, pasta gigi...", icon: "cookie", color: "green" }
+            { c: 5, label: "5 Benda Terlihat", ph: "Sebutkan benda fisik...", icon: "eye", instruction: "Mata terbuka, cari detail visual." },
+            { c: 4, label: "4 Benda Teraba", ph: "Tekstur celana, meja...", icon: "hand", instruction: "Rasakan tekstur nyata di kulit." },
+            { c: 3, label: "3 Suara Terdengar", ph: "Suara AC, kendaraan...", icon: "ear", instruction: "Dengarkan suara eksternal." },
+            { c: 2, label: "2 Aroma Tercium", ph: "Sabun, kopi, udara...", icon: "flower-2", instruction: "Hirup udara sekitar." },
+            { c: 1, label: "1 Rasa Kecil", ph: "Sisa minuman...", icon: "cookie", instruction: "Sadari sensasi di lidah." }
         ];
         let gState = { stageIdx: 0, items: [] };
 
         function updateGroundingUI() {
             const stage = G_STAGES[gState.stageIdx];
             document.getElementById('g-label').innerText = stage.label;
+            document.getElementById('g-desc').innerText = stage.instruction;
             document.getElementById('g-input').placeholder = stage.ph;
             document.getElementById('g-counter').innerText = `${gState.items.length}/${stage.c}`;
+            document.getElementById('g-icon-wrapper').innerHTML = `<i data-lucide="${stage.icon}" class="w-6 h-6"></i>`;
             
-            // Colors & Icons
-            const iconWrapper = document.getElementById('g-icon-wrapper');
-            iconWrapper.innerHTML = `<i data-lucide="${stage.icon}" class="w-6 h-6"></i>`;
-            // Note: Simplification for colors, sticking to blue theme for consistency but could vary
-            
-            // Progress Bar
             const pct = (gState.items.length / stage.c) * 100;
             document.getElementById('g-progress-bar').style.width = `${pct}%`;
 
-            // Chips
             const container = document.getElementById('g-chips-container');
             container.innerHTML = '';
             if (gState.items.length === 0) {
@@ -713,17 +697,14 @@
             const currentTarget = G_STAGES[gState.stageIdx].c;
             
             if (gState.items.length >= currentTarget) {
-                // Stage Complete
-                updateGroundingUI(); // Show last item briefly
+                updateGroundingUI(); 
                 setTimeout(() => {
                     gState.stageIdx++;
                     gState.items = [];
                     if (gState.stageIdx >= G_STAGES.length) {
-                        // All Done
                         document.getElementById('grounding-card').classList.add('hidden');
                         document.getElementById('grounding-success').classList.remove('hidden');
                     } else {
-                        // Next Stage
                         updateGroundingUI();
                     }
                 }, 500);
@@ -740,33 +721,23 @@
             updateGroundingUI();
         }
 
-        // --- 6. FEATURE: ARTICLES ---
         function toggleArticle(btn) {
             const content = btn.nextElementSibling;
             const chevron = btn.querySelector('.article-chevron');
             const isHidden = content.classList.contains('hidden');
-
-            // Close others (optional, feels cleaner)
             document.querySelectorAll('.article-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.article-chevron').forEach(el => el.classList.remove('rotate-180'));
-
             if (isHidden) {
                 content.classList.remove('hidden');
                 chevron.classList.add('rotate-180');
             }
         }
 
-        // --- INIT ---
         window.onload = function() {
             lucide.createIcons();
             resetGrounding();
-            
-            // Prevent double tap zoom
-            document.addEventListener('dblclick', function(event) {
-                event.preventDefault();
-            }, { passive: false });
+            document.addEventListener('dblclick', function(event) { event.preventDefault(); }, { passive: false });
         };
-
     </script>
 </body>
 </html>
